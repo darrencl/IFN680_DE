@@ -255,7 +255,7 @@ def task_2():
         
         clf.fit(X_train_transformed, y_train)
         # compute the accurary on the test set
-        mean_accuracy = clf.score(X_train_transformed, y_train) #'INSERT MISSING CODE HERE'
+        mean_accuracy = clf.score(X_test_transformed, y_test) #'INSERT MISSING CODE HERE'
  
         return -mean_accuracy
     
