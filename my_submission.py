@@ -314,6 +314,6 @@ def task_3():
 if __name__ == "__main__":
 #    pass
     task_1()    
-#    task_2()    
+    task_2()    
 #    task_3()    
 
