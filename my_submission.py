@@ -363,8 +363,8 @@ def task_3():
     for i, p in enumerate(de_gen):
         w, c_w = p  #'INSERT MISSING CODE HERE'
         print('Generation {},  best cost {}'.format(i,abs(c_w)))
-        # Stop if the accuracy is above 70%
-        if abs(c_w)>0.70:
+        # Stop if the accuracy is above 90%
+        if abs(c_w)>0.90:
             break
  
     # Print the search result
