@@ -304,8 +304,74 @@ def task_3():
     '''
     Place holder for Task 3    
     '''
-    pass
-    'INSERT MISSING CODE HERE'
+    def eval_hyper(w):
+        '''
+        Return the negative of the accuracy of a MLP with trained 
+        with the hyperparameter vector w
+        
+        alpha : float, optional, default 0.0001
+                L2 penalty (regularization term) parameter.
+        '''
+        
+        nh1, nh2, alpha, learning_rate_init  = (
+                int(1+w[0]), # nh1
+                int(1+w[1]), # nh2
+                10**w[2], # alpha on a log scale
+                10**w[3]  # learning_rate_init  on a log scale
+                )
+
+
+        clf = MLPClassifier(hidden_layer_sizes=(nh1, nh2), 
+                            max_iter=100, 
+                            alpha=alpha, #1e-4
+                            learning_rate_init=learning_rate_init, #.001
+                            solver='sgd', verbose=10, tol=1e-4, random_state=1
+                            )
+        
+        clf.fit(X_train_transformed, y_train)
+        # compute the accurary on the test set
+        mean_accuracy = clf.score(X_test_transformed, y_test) #'INSERT MISSING CODE HERE'
+ 
+        return -mean_accuracy
+    
+    # . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+
+    # Load the dataset
+    X_all = np.loadtxt('dataset_inputs.txt', dtype=np.uint8)[:1000]
+    y_all = np.loadtxt('dataset_targets.txt',dtype=np.uint8)[:1000]    
+    X_train, X_test, y_train, y_test = model_selection.train_test_split(
+                                X_all, y_all, test_size=0.4, random_state=42)
+       
+    # Preprocess the inputs with 'preprocessing.StandardScaler'
+    
+    scaler = preprocessing.StandardScaler().fit(X_train)
+    X_train_transformed = scaler.transform(X_train)
+    X_test_transformed =  scaler.transform(X_test)#'INSERT MISSING CODE HERE'
+
+
+    
+    bounds = [(1,100),(1,100),(-6,2),(-6,1)]  # bounds for hyperparameters
+    
+    de_gen = differential_evolution(
+            eval_hyper, 
+            bounds, 
+            mut = 1,
+            popsize=5, 
+            maxiter=40,
+            verbose=True)
+    
+    for i, p in enumerate(de_gen):
+        w, c_w = p  #'INSERT MISSING CODE HERE'
+        print('Generation {},  best cost {}'.format(i,abs(c_w)))
+        # Stop if the accuracy is above 70%
+        if abs(c_w)>0.70:
+            break
+ 
+    # Print the search result
+    print('Stopped search after {} generation. Best accuracy reached is {}'.format(i,abs(c_w)))   
+    print('Hyperparameters found:')
+    print('nh1 = {}, nh2 = {}'.format(int(1+w[0]), int(1+w[1])))          
+    print('alpha = {}, learning_rate_init = {}'.format(10**w[2],10**w[3]))
 
 
 # ----------------------------------------------------------------------------
@@ -315,5 +381,5 @@ if __name__ == "__main__":
 #    pass
     task_1()    
     task_2()    
-#    task_3()    
+    task_3()    
 
