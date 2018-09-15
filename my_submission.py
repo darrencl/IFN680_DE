@@ -73,21 +73,15 @@ def differential_evolution(fobj,
     #    evaluating them with fobj.
     
     'INSERT MISSING CODE HERE'
-    print('init')
+    # Initialize weights
     w = np.random.rand(popsize, n_dimensions)
-    '''
-    w_denorm = []
-    for j in range(0,len(w)):
-        w_denorm.append([denormalize(bounds[i][0], bounds[i][1],w[i]) for i in range(0,n_dimensions)])
-        '''
-    '''
-    w = [random.uniform(preprocessing.normalize([[bounds[x][0],bounds[x][1]]])[0][0], preprocessing.normalize([[bounds[x][0],bounds[x][1]]])[0][1]) for x in range(0,n_dimensions)]
-    '''
+    
+    # Denormalize weights and put to w_denorm
     min_b, max_b = np.asarray(bounds).T
     diff = np.fabs(min_b - max_b)
     w_denorm = min_b + w * diff
-    print(w_denorm[0])
-    print(len(w))
+    
+    # Initialize cost using w_denorm and assign the smallest cost into the best 
     cost = np.asarray([fobj(a_w) for a_w in w_denorm])
     best_idx = np.argmin(cost)
     best = w_denorm[best_idx]
@@ -352,26 +346,30 @@ def task_3():
     
     bounds = [(1,100),(1,100),(-6,2),(-6,1)]  # bounds for hyperparameters
     
-    de_gen = differential_evolution(
-            eval_hyper, 
-            bounds, 
-            mut = 1,
-            popsize=5, 
-            maxiter=40,
-            verbose=True)
+    experiments_parameter = [(5,40), (10,20), (20,10), (40,5)] # Contains list of tuples (popsize, maxiter) for experiments purpose
     
-    for i, p in enumerate(de_gen):
-        w, c_w = p  #'INSERT MISSING CODE HERE'
-        print('Generation {},  best cost {}'.format(i,abs(c_w)))
-        # Stop if the accuracy is above 90%
-        if abs(c_w)>0.90:
-            break
- 
-    # Print the search result
-    print('Stopped search after {} generation. Best accuracy reached is {}'.format(i,abs(c_w)))   
-    print('Hyperparameters found:')
-    print('nh1 = {}, nh2 = {}'.format(int(1+w[0]), int(1+w[1])))          
-    print('alpha = {}, learning_rate_init = {}'.format(10**w[2],10**w[3]))
+    # Iterate through the list of parameters and do experiments (i.e. count accuracy)
+    for popsize_maxiter_tuple in experiments_parameter:
+        de_gen = differential_evolution(
+                eval_hyper, 
+                bounds, 
+                mut = 1,
+                popsize=popsize_maxiter_tuple[0], 
+                maxiter=popsize_maxiter_tuple[1],
+                verbose=True)
+
+        for i, p in enumerate(de_gen):
+            w, c_w = p  #'INSERT MISSING CODE HERE'
+            print('Generation {},  best cost {}'.format(i,abs(c_w)))
+            # Stop if the accuracy is above 90%
+            if abs(c_w)>0.90:
+                break
+
+        # Print the search result
+        print('Stopped search after {} generation. Best accuracy reached is {}'.format(i,abs(c_w)))   
+        print('Hyperparameters found:')
+        print('nh1 = {}, nh2 = {}'.format(int(1+w[0]), int(1+w[1])))          
+        print('alpha = {}, learning_rate_init = {}'.format(10**w[2],10**w[3]))
 
 
 # ----------------------------------------------------------------------------
